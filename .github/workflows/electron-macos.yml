@@ -16,7 +16,7 @@ jobs:
 
       - name: Clone Repo
         run: >-
-          git clone https://paulw0003:${{ secrets.CANIS_PAT }}@github.com/1023ventures/canis.git
+          git clone https://paulw0003:${{ secrets.CANIS_PAT }}@github.com/1023-Ventures/canis.git
         continue-on-error: false     
 
       # - name: Set up Node.js
