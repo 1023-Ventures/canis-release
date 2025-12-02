@@ -19,57 +19,57 @@ jobs:
           git clone https://paulw0003:${{ secrets.CANIS_PAT }}@github.com/1023-Ventures/canis.git
         continue-on-error: false     
 
-      # - name: Set up Node.js
-      #   uses: actions/setup-node@v4
-      #   with:
-      #     node-version: 22.12.0
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.12.0
 
-      # - name: Install dependencies
-      #   run: 
-      #     yarn install
-      #   # working-directory: ./canis
+      - name: Install dependencies
+        run: 
+          yarn install
+        working-directory: ./canis
 
-      # # Import the Apple certificate and provisioning profile
-      # - name: Import Apple certificate
-      #   env:
-      #     CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE }}
-      #     CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-      #   run: |
-      #     echo "$CERTIFICATE_BASE64" | base64 --decode > certificate.p12
-      #     security create-keychain -p "" build.keychain
-      #     security default-keychain -s build.keychain
-      #     security unlock-keychain -p "" build.keychain
-      #     security import certificate.p12 -k build.keychain -P "$CERTIFICATE_PASSWORD" -T /usr/bin/codesign
-      #     security set-key-partition-list -S apple-tool:,apple: -s -k "" build.keychain
-      #   # working-directory: ./maia/maia-ps-electron
+      # Import the Apple certificate and provisioning profile
+      - name: Import Apple certificate
+        env:
+          CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE }}
+          CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+        run: |
+          echo "$CERTIFICATE_BASE64" | base64 --decode > certificate.p12
+          security create-keychain -p "" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "" build.keychain
+          security import certificate.p12 -k build.keychain -P "$CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -s -k "" build.keychain
+        working-directory: ./canis
 
-      # # Set up environment variables for signing and notarization
-      # - name: Set environment variables
-      #   run: |
-      #     echo "CSC_LINK=certificate.p12" >> $GITHUB_ENV
-      #     echo "CSC_KEY_PASSWORD=${{ secrets.APPLE_CERTIFICATE_PASSWORD }}" >> $GITHUB_ENV
-      #     echo "APPLE_ID=${{ secrets.APPLE_ID }}" >> $GITHUB_ENV
-      #     echo "APPLE_APP_SPECIFIC_PASSWORD=${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}" >> $GITHUB_ENV
-      #     echo "APPLE_TEAM_ID=${{ secrets.APPLE_TEAM_ID }}" >> $GITHUB_ENV
-      #     echo "GH_TOKEN=${{ secrets.GH_TOKEN }}" >> $GITHUB_ENV
-      #   # working-directory: ./maia/maia-ps-electron
+      # Set up environment variables for signing and notarization
+      - name: Set environment variables
+        run: |
+          echo "CSC_LINK=certificate.p12" >> $GITHUB_ENV
+          echo "CSC_KEY_PASSWORD=${{ secrets.APPLE_CERTIFICATE_PASSWORD }}" >> $GITHUB_ENV
+          echo "APPLE_ID=${{ secrets.APPLE_ID }}" >> $GITHUB_ENV
+          echo "APPLE_APP_SPECIFIC_PASSWORD=${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}" >> $GITHUB_ENV
+          echo "APPLE_TEAM_ID=${{ secrets.APPLE_TEAM_ID }}" >> $GITHUB_ENV
+          echo "GH_TOKEN=${{ secrets.GH_TOKEN }}" >> $GITHUB_ENV
+        working-directory: ./canis
 
-      # # Build, sign, and notarize the app
-      # - name: Build, sign, and notarize
-      #   env:
-      #     NODE_ENV: production      
-      #   run: 
-      #     yarn build
-      #   # working-directory: ./maia/maia-ps-electron
+      # Build, sign, and notarize the app
+      - name: Build, sign, and notarize
+        env:
+          NODE_ENV: production      
+        run: 
+          yarn build
+        working-directory: ./canis
 
-      # - name: Create release and assets
-      #   uses: ncipollo/release-action@v1
-      #   with:
-      #     token: ${{ secrets.GH_TOKEN_2 }}
-      #     tag: ${{ env.VERSION_NUMBER }}
-      #     name: ${{ env.VERSION_NUMBER }}
-      #     owner: 1023-Ventures
-      #     repo: canis
-      #     prerelease: true
-      #     draft: false
-      #     artifacts: "./dist/v${{ env.VERSION_NUMBER }}/canis*"
+      - name: Create release and assets
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GH_TOKEN_2 }}
+          tag: ${{ env.VERSION_NUMBER }}
+          name: ${{ env.VERSION_NUMBER }}
+          owner: 1023-Ventures
+          repo: canis-release
+          prerelease: true
+          draft: false
+          artifacts: "./canis/dist/v${{ env.VERSION_NUMBER}}/*"
